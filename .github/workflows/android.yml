@@ -25,8 +25,27 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Install Android SDK
-      run: yes | sdkmanager --install "platforms;android-29" "build-tools;29.0.2"
+    - name: Set up Android SDK
+      run: |
+        sudo mkdir -p /usr/local/android-sdk
+        sudo chown $USER:$USER /usr/local/android-sdk
+        wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+        unzip -q cmdline-tools.zip -d /usr/local/android-sdk/
+
+        # Move extracted cmdline-tools to correct hierarchy (cmdline-tools/latest)
+        # The zip extracts to 'cmdline-tools', so we rename it to 'latest' and move it inside a new 'cmdline-tools' dir
+        mv /usr/local/android-sdk/cmdline-tools /usr/local/android-sdk/latest
+        mkdir -p /usr/local/android-sdk/cmdline-tools
+        mv /usr/local/android-sdk/latest /usr/local/android-sdk/cmdline-tools/latest
+
+        export ANDROID_HOME=/usr/local/android-sdk
+        export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+
+        echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
+
+        sdkmanager --version
+        yes | sdkmanager --install "platforms;android-29" "build-tools;29.0.2"
 
     - name: Build with Gradle
       run: ./gradlew assembleBlackBox32Debug assembleBlackBox64Debug

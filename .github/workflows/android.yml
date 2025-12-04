@@ -25,6 +25,9 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Install Android SDK
+      run: yes | sdkmanager --install "platforms;android-29" "build-tools;29.0.2"
+
     - name: Build with Gradle
       run: ./gradlew assembleBlackBox32Debug assembleBlackBox64Debug
 

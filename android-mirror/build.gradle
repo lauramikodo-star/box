@@ -21,4 +21,5 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
+    implementation "com.github.CodingGay.BlackReflection:core:$rootProject.ext.blackReflection"
 }
